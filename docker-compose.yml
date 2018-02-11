@@ -1,0 +1,49 @@
+version: "3.2"
+services:
+  database:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_DATABASE=shelters
+  sandbox: 
+    build: .
+    depends_on:
+      - database
+    tty: true
+    user: developer
+    environment:
+      - MYSQL_DATABASE_USER=root
+      - MYSQL_DATABASE_PASSWORD=
+      - MYSQL_DATABASE_DB=shelters
+      - MYSQL_DATABASE_HOST=database
+      - CODECOV_TOKEN
+
+    volumes:
+      - type: bind
+        source: "$HOME/.gitconfig"
+        target: /home/developer/.gitconfig
+      - type: bind
+        source: "$HOME/.vimrc"
+        target: /home/developer/.vimrc
+      - type: bind
+        source: "$HOME/.vim"
+        target: /home/developer/.vim
+      - type: bind
+        source: "$HOME/.ssh"
+        target: /home/developer/.ssh
+      - type: bind
+        source: "$HOME/.zshrc"
+        target: /home/developer/.zshrc
+      - type: bind
+        source: .
+        target: /go/src/update-shelters
+  functions:
+    build: .
+    environment:
+      - TRAVIS_BRANCH
+      - MYSQL_DATABASE_USER
+      - MYSQL_DATABASE_PASSWORD
+      - MYSQL_DATABASE_DB
+      - MYSQL_DATABASE_HOST
+      - AWS_ACCESS_KEY_ID  
+      - AWS_SECRET_ACCESS_KEY
