@@ -5,7 +5,7 @@ import (
   "io/ioutil"
 )
 
-func DownloadFeed(url string) []byte {
+func DownloadFile(url string) []byte {
   rs, err := http.Get(url)
 
   if err != nil {
