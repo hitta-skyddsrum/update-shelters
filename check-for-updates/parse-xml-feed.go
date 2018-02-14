@@ -2,7 +2,6 @@ package main
 
 import (
   "encoding/xml"
-  "fmt"
 )
 
 type Feed struct {
@@ -16,13 +15,12 @@ type Entry struct {
   Updated string    `xml:"updated"`
 }
 
-func ParseFeed(byteFeed []byte) {
+func ParseFeed(byteFeed []byte) Feed {
   var parsedFeed Feed
 
   xml.Unmarshal(byteFeed, &parsedFeed)
 
-  fmt.Print(parsedFeed.Entry.Link)
-  fmt.Print(parsedFeed.Entry.Updated)
+  return parsedFeed
 }
 
 
