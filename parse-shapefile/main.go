@@ -57,18 +57,37 @@ func MapShapeFields(zipShape *shp.ZipReader) map[string]interface{} {
   return mappings
 }
 
-func ShapeToJson(shape *shp.ZipReader, mappings map[string]interface{}) (int, []byte) {
-  fields := shape.Fields()
+type Geometry struct {
+  Type        string    `json:"type"`
+  Coordinates [2]float64  `json:"coordinates"`
+}
+
+func ShapeToJson(zipShape *shp.ZipReader, mappings map[string]interface{}) (int, []byte) {
+  fields := zipShape.Fields()
 
   shapes := make([]interface{}, 0)
   nrShapes := 0
 
-  for shape.Next() {
+  for zipShape.Next() {
+    _, shape := zipShape.Shape()
     jo := map[string]interface{}{
     }
 
+    if shape.BBox().MinX != shape.BBox().MaxX {
+      panic("fail")
+    }
+
+    if shape.BBox().MinY != shape.BBox().MaxY {
+      panic("fail")
+    }
+
+    jo["geometry"] = Geometry{
+      Type: "Point",
+      Coordinates: [...]float64{shape.BBox().MinX, shape.BBox().MinY},
+    }
+
     for k, f := range fields {
-      val := shape.Attribute(k)
+      val := zipShape.Attribute(k)
       name := mappings[f.String()].(string)
       jo[name] = val
     }
