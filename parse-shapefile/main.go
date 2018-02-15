@@ -7,6 +7,8 @@ import (
   "os"
   "encoding/json"
   "io/ioutil"
+  "bufio"
+  "strings"
 )
 
 func ListFields(shape *shp.ZipReader) {
@@ -30,7 +32,32 @@ func ShowExample(shape *shp.ZipReader) {
   fmt.Println()
 }
 
-func ShapeToJson(shape *shp.ZipReader) (int, []byte) {
+func MapShapeFields(zipShape *shp.ZipReader) map[string]interface{} {
+  mappings := map[string]interface{}{
+  }
+  fields := zipShape.Fields()
+
+  fmt.Print("Map fields from shapefile to desired name:")
+  fmt.Println()
+
+  for _, f := range fields {
+    reader := bufio.NewReader(os.Stdin)
+    fmt.Printf("%s [%s]:", f.String(), f.String())
+    value, _ := reader.ReadString('\n')
+    value = strings.TrimSuffix(value, "\n")
+
+    if len(value) > 1 {
+      mappings[f.String()] = value
+    } else {
+      mappings[f.String()] = f.String()
+    }
+
+  }
+
+  return mappings
+}
+
+func ShapeToJson(shape *shp.ZipReader, mappings map[string]interface{}) (int, []byte) {
   fields := shape.Fields()
 
   shapes := make([]interface{}, 0)
@@ -41,7 +68,9 @@ func ShapeToJson(shape *shp.ZipReader) (int, []byte) {
     }
 
     for k, f := range fields {
-      jo[f.String()] = k
+      val := shape.Attribute(k)
+      name := mappings[f.String()].(string)
+      jo[name] = val
     }
 
     shapes = append(shapes, jo)
@@ -72,26 +101,32 @@ func main() {
 
   shapefile := flag.Args()[0]
 
-  shape, err := shp.OpenZip(shapefile)
+  zipShape, err := shp.OpenZip(shapefile)
   if err != nil {
     panic(err)
   }
 
-  defer shape.Close()
+  defer zipShape.Close()
 
   if *listFields == true {
-    ListFields(shape)
+    ListFields(zipShape)
     os.Exit(0)
   }
 
   if *showExample == true {
-    ShowExample(shape)
+    ShowExample(zipShape)
     os.Exit(0)
   }
 
-  nrShapes, shapes := ShapeToJson(shape)
-  StoreJson(shapes)
+  mappings := MapShapeFields(zipShape)
 
-  fmt.Printf("Successfully wrote %d shapes to JSON", nrShapes)
+  fmt.Print("Will use the following mappings: ", mappings)
+  fmt.Println()
+
+  nrShelters, shelters := ShapeToJson(zipShape, mappings)
+
+  StoreJson(shelters)
+
+  fmt.Printf("Successfully wrote %d shapes to JSON", nrShelters)
   fmt.Println()
 }
