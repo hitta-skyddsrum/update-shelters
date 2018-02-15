@@ -7,8 +7,10 @@ gcc \
 gettext \
 git \
 jq \
+less \
 libintl \
 make \
+openssh \
 nodejs \
 sudo \
 vim \
