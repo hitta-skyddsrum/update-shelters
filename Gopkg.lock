@@ -12,6 +12,12 @@
   version = "v1.0.1"
 
 [[projects]]
+  name = "github.com/im7mortal/UTM"
+  packages = ["."]
+  revision = "495a4ab55a22d59f111437b822bed848775fc6ce"
+  version = "v1.2.0"
+
+[[projects]]
   name = "github.com/jonas-p/go-shp"
   packages = ["."]
   revision = "215a5781289c857f70b19c2740e65d81de343b50"
@@ -20,6 +26,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "18feadf25c21e52b836ad0ecbbaf03d261231e0a4eaae11a64edf3da5699aa6c"
+  inputs-digest = "4706b86c3c191d0c71bf9f13e25b43164448868381c8c5137df391ee46b98fa6"
   solver-name = "gps-cdcl"
   solver-version = 1

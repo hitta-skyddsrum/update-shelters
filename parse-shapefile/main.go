@@ -20,14 +20,19 @@ func ListFields(shape *shp.ZipReader) {
   }
 }
 
-func ShowExample(shape *shp.ZipReader) {
-  fields := shape.Fields()
-  shape.Next()
+func ShowExample(zipShape *shp.ZipReader) {
+  fields := zipShape.Fields()
+  zipShape.Next()
+  _, shape := zipShape.Shape()
 
   for k, f := range fields {
-    val := shape.Attribute(k)
+    val := zipShape.Attribute(k)
     fmt.Printf("\t%v: %v\n", f.String(), val)
   }
+
+  coordinates := Sweref99ToLatLon([2]float64{shape.BBox().MinX, shape.BBox().MinY})
+  fmt.Printf("\tLatitude: %v\n", coordinates[0])
+  fmt.Printf("\tLongitude: %v\n", coordinates[1])
 
   fmt.Println()
 }
@@ -83,7 +88,7 @@ func ShapeToJson(zipShape *shp.ZipReader, mappings map[string]interface{}) (int,
 
     jo["geometry"] = Geometry{
       Type: "Point",
-      Coordinates: [...]float64{shape.BBox().MinX, shape.BBox().MinY},
+      Coordinates: Sweref99ToLatLon([2]float64{shape.BBox().MinX, shape.BBox().MinY}),
     }
 
     for k, f := range fields {
