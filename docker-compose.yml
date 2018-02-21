@@ -24,6 +24,8 @@ services:
       - MYSQL_DATABASE_DB=shelters
       - MYSQL_DATABASE_HOST=database
       - CODECOV_TOKEN
+      - LINES
+      - COLUMNS
 
     volumes:
       - type: bind
