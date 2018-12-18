@@ -10,7 +10,7 @@ func main() {
   var feed = ParseFeed(byteFeed)
 
   var shapefile = DownloadFile(feed.Entry.Link)
-  path := StoreShapefile(shapefile)
+  path := StoreShapefile(feed.Entry.Updated, shapefile)
 
   fmt.Printf("Stored shapefile at %s\n", path)
 }

@@ -4,8 +4,8 @@ import (
   "io/ioutil"
 )
 
-func StoreShapefile(data []byte) string {
-  storagePath := "./skyddsrum.zip"
+func StoreShapefile(name string, data []byte) string {
+  storagePath := "./" + name + ".zip"
   err := ioutil.WriteFile(storagePath, data, 0644)
   if err != nil {
     panic(err)
