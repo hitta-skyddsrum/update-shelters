@@ -6,6 +6,6 @@ bin
 
 # golang vendor (dependencies) directory
 vendor
-database
+database/data
 
 *.swp

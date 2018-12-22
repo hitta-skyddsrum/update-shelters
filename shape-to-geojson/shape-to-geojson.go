@@ -1,6 +1,7 @@
 package main
 
 import (
+  "github.com/hitta-skyddsrum/update-shelters/sweref99-to-latlon"
   "github.com/jonas-p/go-shp"
   "encoding/json"
 )
@@ -47,7 +48,7 @@ func ShapeToGeoJson(zipShape *shp.ZipReader, mappings map[string]interface{}) (i
 
     ft.Geometry = Geometry{
       Type: "Point",
-      Coordinates: Sweref99ToLatLon([2]float64{shape.BBox().MinX, shape.BBox().MinY}),
+      Coordinates: coordConv.Sweref99ToLatLon([2]float64{shape.BBox().MinX, shape.BBox().MinY}),
     }
 
     for k, f := range fields {

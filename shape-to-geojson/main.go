@@ -1,6 +1,7 @@
 package main
 
 import (
+  "github.com/hitta-skyddsrum/update-shelters/sweref99-to-latlon"
   "github.com/jonas-p/go-shp"
   "fmt"
   "flag"
@@ -29,7 +30,7 @@ func ShowExample(zipShape *shp.ZipReader) {
     fmt.Printf("\t%v: %v\n", f.String(), val)
   }
 
-  coordinates := Sweref99ToLatLon([2]float64{shape.BBox().MinX, shape.BBox().MinY})
+  coordinates := coordConv.Sweref99ToLatLon([2]float64{shape.BBox().MinX, shape.BBox().MinY})
   fmt.Printf("\tLatitude: %v\n", coordinates[0])
   fmt.Printf("\tLongitude: %v\n", coordinates[1])
 

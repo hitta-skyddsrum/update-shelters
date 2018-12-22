@@ -2,30 +2,57 @@
 
 
 [[projects]]
+  digest = "1:d5039f72505274cddd25fef3b4790e7d985eaf063a0c7df1363ed6292ddc30fb"
   name = "github.com/aws/aws-lambda-go"
   packages = [
     "lambda",
     "lambda/messages",
-    "lambdacontext"
+    "lambdacontext",
   ]
+  pruneopts = ""
   revision = "6e2e37798efbb1dfd8e9c6681702e683a6046517"
   version = "v1.0.1"
 
 [[projects]]
+  digest = "1:e692d16fdfbddb94e9e4886aaf6c08bdbae5cb4ac80651445de9181b371c6e46"
+  name = "github.com/go-sql-driver/mysql"
+  packages = ["."]
+  pruneopts = ""
+  revision = "72cd26f257d44c1114970e19afddcd812016007e"
+  version = "v1.4.1"
+
+[[projects]]
+  digest = "1:cbe4bd41d6678b8b5ecff13e9bc92406938bc227bddc94c32985d2acde8903f7"
   name = "github.com/im7mortal/UTM"
   packages = ["."]
+  pruneopts = ""
   revision = "495a4ab55a22d59f111437b822bed848775fc6ce"
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:45438be4826f393238ff0d162aa77b7faabef900333dbbd67d4ef6887ef55f1c"
   name = "github.com/jonas-p/go-shp"
   packages = ["."]
+  pruneopts = ""
   revision = "215a5781289c857f70b19c2740e65d81de343b50"
   version = "v0.1.1"
+
+[[projects]]
+  digest = "1:77d3cff3a451d50be4b52db9c7766c0d8570ba47593f0c9dc72173adb208e788"
+  name = "google.golang.org/appengine"
+  packages = ["cloudsql"]
+  pruneopts = ""
+  revision = "4a4468ece617fc8205e99368fa2200e9d1fad421"
+  version = "v1.3.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4706b86c3c191d0c71bf9f13e25b43164448868381c8c5137df391ee46b98fa6"
+  input-imports = [
+    "github.com/aws/aws-lambda-go/lambda",
+    "github.com/go-sql-driver/mysql",
+    "github.com/im7mortal/UTM",
+    "github.com/jonas-p/go-shp",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

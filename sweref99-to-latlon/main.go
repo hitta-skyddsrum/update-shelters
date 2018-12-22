@@ -1,4 +1,4 @@
-package main
+package coordConv
 
 import (
   "github.com/im7mortal/UTM"
