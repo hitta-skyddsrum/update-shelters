@@ -5,6 +5,7 @@
   digest = "1:d5039f72505274cddd25fef3b4790e7d985eaf063a0c7df1363ed6292ddc30fb"
   name = "github.com/aws/aws-lambda-go"
   packages = [
+    "events",
     "lambda",
     "lambda/messages",
     "lambdacontext",
@@ -12,6 +13,51 @@
   pruneopts = ""
   revision = "6e2e37798efbb1dfd8e9c6681702e683a6046517"
   version = "v1.0.1"
+
+[[projects]]
+  digest = "1:d308a6c1896a41fe2cc8b822acd7a9a40174cde114a0236b77c5174bf2d67934"
+  name = "github.com/aws/aws-sdk-go"
+  packages = [
+    "aws",
+    "aws/awserr",
+    "aws/awsutil",
+    "aws/client",
+    "aws/client/metadata",
+    "aws/corehandlers",
+    "aws/credentials",
+    "aws/credentials/ec2rolecreds",
+    "aws/credentials/endpointcreds",
+    "aws/credentials/processcreds",
+    "aws/credentials/stscreds",
+    "aws/csm",
+    "aws/defaults",
+    "aws/ec2metadata",
+    "aws/endpoints",
+    "aws/request",
+    "aws/session",
+    "aws/signer/v4",
+    "internal/ini",
+    "internal/s3err",
+    "internal/sdkio",
+    "internal/sdkrand",
+    "internal/sdkuri",
+    "internal/shareddefaults",
+    "private/protocol",
+    "private/protocol/eventstream",
+    "private/protocol/eventstream/eventstreamapi",
+    "private/protocol/query",
+    "private/protocol/query/queryutil",
+    "private/protocol/rest",
+    "private/protocol/restxml",
+    "private/protocol/xml/xmlutil",
+    "service/s3",
+    "service/s3/s3iface",
+    "service/s3/s3manager",
+    "service/sts",
+  ]
+  pruneopts = ""
+  revision = "aabf189db35ba7eb5a35afe6d681fc0f70954fca"
+  version = "v1.16.18"
 
 [[projects]]
   digest = "1:e692d16fdfbddb94e9e4886aaf6c08bdbae5cb4ac80651445de9181b371c6e46"
@@ -28,6 +74,13 @@
   pruneopts = ""
   revision = "495a4ab55a22d59f111437b822bed848775fc6ce"
   version = "v1.2.0"
+
+[[projects]]
+  digest = "1:13fe471d0ed891e8544eddfeeb0471fd3c9f2015609a1c000aefdedf52a19d40"
+  name = "github.com/jmespath/go-jmespath"
+  packages = ["."]
+  pruneopts = ""
+  revision = "c2b33e84"
 
 [[projects]]
   digest = "1:45438be4826f393238ff0d162aa77b7faabef900333dbbd67d4ef6887ef55f1c"
@@ -49,7 +102,11 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/aws/aws-lambda-go/events",
     "github.com/aws/aws-lambda-go/lambda",
+    "github.com/aws/aws-sdk-go/aws/session",
+    "github.com/aws/aws-sdk-go/service/s3",
+    "github.com/aws/aws-sdk-go/service/s3/s3manager",
     "github.com/go-sql-driver/mysql",
     "github.com/im7mortal/UTM",
     "github.com/jonas-p/go-shp",

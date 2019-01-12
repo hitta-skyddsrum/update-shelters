@@ -1,4 +1,14 @@
+install = dep ensure
+
 build:
-	dep ensure
-	env GOOS=linux go build -i -ldflags="-s -w" -o bin/check check-for-updates/*.go
-	env GOOS=linux go build -i -ldflags="-s -w" -o bin/shape-to-geojson shape-to-geojson/*.go
+	$(install)
+	go build -i -ldflags="-s -w" -o bin/check ./check-for-updates
+	go build -i -ldflags="-s -w" -o bin/shape-to-csv ./shape-to-csv
+	go build -i -ldflags="-s -w" -o bin/import-csv-to-mysql ./import-csv-to-mysql
+
+lambda:
+	$(install)
+	GOARCH=amd64 GOOS=linux go build -i -ldflags="-s -w" -o lambda-bin/shape-to-csv -tags lambda ./shape-to-csv
+
+clean:
+	rm -rf bin/*

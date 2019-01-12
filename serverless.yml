@@ -26,11 +26,16 @@ provider:
 #  region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:GetObject"
+        - "s3:PutObject"
+      Resource: "arn:aws:s3:::${env:BUCKET_NAME}/*"
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+      Resource: "arn:aws:s3:::${env:BUCKET_NAME}"
 #    - Effect: "Allow"
 #      Action:
 #        - "s3:PutObject"
@@ -49,13 +54,17 @@ package:
  exclude:
    - ./**
  include:
-   - ./bin/**
+   - ./lambda-bin/**
 
 functions:
-  hello:
-    handler: bin/hello
-  world:
-    handler: bin/world
+  shapeToCsv:
+    handler: lambda-bin/shape-to-csv
+    events:
+      - s3:
+          bucket: ${env:BUCKET_NAME}
+          event: s3:ObjectCreated:*
+          rules:
+            - suffix: .zip
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
