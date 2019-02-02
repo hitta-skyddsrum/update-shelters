@@ -9,6 +9,7 @@ build:
 lambda:
 	$(install)
 	GOARCH=amd64 GOOS=linux go build -i -ldflags="-s -w" -o lambda-bin/shape-to-csv -tags lambda ./shape-to-csv
+	GOARCH=amd64 GOOS=linux go build -i -ldflags="-s -w" -o lambda-bin/import-csv-to-mysql -tags lambda ./import-csv-to-mysql
 
 clean:
 	rm -rf bin/*
