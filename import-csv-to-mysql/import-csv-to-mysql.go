@@ -31,7 +31,14 @@ func prepareDb(schema string, mgrStmts string, db *sql.DB) {
 func loadCsvToDb(filePath string, db *sql.DB) {
   fmt.Println("Start import CSV to database.")
   mysql.RegisterLocalFile(filePath)
-  _, err := db.Exec("LOAD DATA LOCAL INFILE '" + filePath + "' INTO TABLE shelters FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\n' IGNORE 1 LINES")
+  _, err := db.Exec(fmt.Sprintf(
+    "LOAD DATA LOCAL INFILE '%s' " +
+    "INTO TABLE shelters " +
+    "FIELDS TERMINATED BY ',' " +
+    "OPTIONALLY ENCLOSED BY '\"' " +
+    "LINES TERMINATED BY '\n' " +
+    "IGNORE 1 LINES",
+  filePath))
   if err != nil {
     panic(err)
   }
