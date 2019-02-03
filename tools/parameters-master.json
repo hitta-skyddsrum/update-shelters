@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey": "KeyPairName",
+    "ParameterValue": "temporary-tunnel"
+  },
+  {
+    "ParameterKey": "RemoteAccessCIDR",
+    "ParameterValue": "0.0.0.0/0"
+  },
+  {
+    "ParameterKey": "AvailabilityZones",
+    "ParameterValue": "us-east-1a, us-east-1b"
+  }
+]

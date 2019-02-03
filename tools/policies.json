@@ -1,0 +1,143 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateInstanceProfile",
+                "iam:DeleteInstanceProfile",
+                "iam:GetInstanceProfile",
+                "ec2:DeleteVpcPeeringConnection",
+                "cloudformation:ListStackInstances",
+                "iam:RemoveRoleFromInstanceProfile",
+                "iam:ListInstanceProfiles",
+                "iam:AddRoleToInstanceProfile",
+                "autoscaling:CreateLaunchConfiguration",
+                "iam:ListInstanceProfilesForRole",
+                "autoscaling:AttachInstances",
+                "autoscaling:DeleteLaunchConfiguration",
+                "cloudformation:CreateStack",
+                "cloudformation:DeleteStack",
+                "ec2:DeleteDhcpOptions",
+                "autoscaling:UpdateAutoScalingGroup",
+                "cloudformation:UpdateStack",
+                "autoscaling:DeleteAutoScalingGroup",
+                "autoscaling:TerminateInstanceInAutoScalingGroup",
+                "autoscaling:CreateAutoScalingGroup",
+                "ec2:CreateVpcPeeringConnection",
+                "autoscaling:DetachInstances",
+                "cloudformation:ListStackResources"
+            ],
+            "Resource": [
+                "arn:aws:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/*",
+                "arn:aws:autoscaling:*:*:launchConfiguration:*:launchConfigurationName/*",
+                "arn:aws:iam::*:instance-profile/*",
+                "arn:aws:iam::*:role/*",
+                "arn:aws:cloudformation:*:*:stack/*/*",
+                "arn:aws:cloudformation:*:*:stackset/*:*",
+                "arn:aws:ec2:*:*:vpc-peering-connection/*",
+                "arn:aws:ec2:*:*:dhcp-options/*",
+                "arn:aws:ec2:*:*:vpc/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "rds:ListTagsForResource",
+                "ec2:AcceptVpcPeeringConnection"
+            ],
+            "Resource": [
+                "arn:aws:rds:*:*:db:*",
+                "arn:aws:ec2:*:*:vpc-peering-connection/*",
+                "arn:aws:ec2:*:*:vpc/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateDhcpOptions",
+                "ec2:DeleteSubnet",
+                "autoscaling:DescribeAutoScalingInstances",
+                "autoscaling:DescribeScalingProcessTypes",
+                "ec2:DeleteVpcEndpoints",
+                "ec2:CreateNatGateway",
+                "autoscaling-plans:UpdateScalingPlan",
+                "autoscaling:DescribeLaunchConfigurations",
+                "ec2:CreateVpc",
+                "ec2:DescribeDhcpOptions",
+                "logs:DescribeMetricFilters",
+                "ec2:DescribeVpcAttribute",
+                "ec2:AssociateVpcCidrBlock",
+                "ec2:ModifySubnetAttribute",
+                "logs:DeleteMetricFilter",
+                "autoscaling:DescribeScalingActivities",
+                "autoscaling:DescribeAutoScalingGroups",
+                "autoscaling:DescribeScheduledActions",
+                "ec2:ReleaseAddress",
+                "ec2:AssociateDhcpOptions",
+                "cloudformation:ListStacks",
+                "ec2:CreateRouteTable",
+                "logs:TestMetricFilter",
+                "autoscaling-plans:DeleteScalingPlan",
+                "ec2:DisassociateSubnetCidrBlock",
+                "ec2:AllocateAddress",
+                "logs:PutMetricFilter",
+                "ec2:CreateVpcEndpoint",
+                "ec2:DescribeVpcs",
+                "autoscaling-plans:DescribeScalingPlans",
+                "ec2:AssociateSubnetCidrBlock",
+                "ec2:AllocateHosts",
+                "ec2:DeleteNatGateway",
+                "autoscaling-plans:GetScalingPlanResourceForecastData",
+                "ec2:DeleteVpc",
+                "ec2:CreateSubnet",
+                "ec2:DescribeSubnets",
+                "autoscaling-plans:DescribeScalingPlanResources",
+                "autoscaling-plans:CreateScalingPlan"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor3",
+            "Effect": "Allow",
+            "Action": "ec2:DeleteDhcpOptions",
+            "Resource": [
+                "arn:aws:ec2:*:*:vpc-peering-connection/*",
+                "arn:aws:ec2:*:*:subnet/*",
+                "arn:aws:ec2:*:*:vpn-gateway/*",
+                "arn:aws:ec2:*:*:reserved-instances/*",
+                "arn:aws:ec2:*:*:vpn-connection/*",
+                "arn:aws:ec2:*:*:launch-template/*",
+                "arn:aws:ec2:*::snapshot/*",
+                "arn:aws:ec2:*:*:security-group/*",
+                "arn:aws:ec2:*:*:network-acl/*",
+                "arn:aws:ec2:*:*:placement-group/*",
+                "arn:aws:ec2:*:*:network-interface/*",
+                "arn:aws:ec2:*:*:internet-gateway/*",
+                "arn:aws:ec2:*:*:route-table/*",
+                "arn:aws:ec2:*:*:key-pair/*",
+                "arn:aws:ec2:*:*:dhcp-options/*",
+                "arn:aws:ec2:*::spot-instance-request/*",
+                "arn:aws:ec2:*:*:instance/*",
+                "arn:aws:ec2:*:*:volume/*",
+                "arn:aws:ec2:*:*:customer-gateway/*",
+                "arn:aws:ec2:*::fpga-image/*",
+                "arn:aws:ec2:*:*:vpc/*",
+                "arn:aws:ec2:*::image/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor4",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:CreateRoute",
+                "ec2:DeleteRoute",
+                "ec2:DeleteRouteTable"
+            ],
+            "Resource": "arn:aws:ec2:*:*:route-table/*"
+        }
+    ]
+}

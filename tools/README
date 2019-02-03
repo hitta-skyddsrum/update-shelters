@@ -1,0 +1,12 @@
+# Skapa tunnel till databas-server
+Följande script kommer skapa en ec2-server att fungera som SSH-brygga till MySQL-servern.
+
+## Skapa tunnel
+1. Importera policies.json till din aws-användare.
+1. `aws cloudformation create-stack --template-body file://./linux-bastion-master.template --stack-name shelters-bastion --region us-east-1 --parameters file://./parameters-master.json --capabilities CAPABILITY_IAM`
+1. Vänta tills stacken är skapad.
+1. `python3 create-connection.py`
+
+## Ta bort tunnel
+1. `python3 destroy-connection.py`
+1. `aws cloudformation delete-stack --stack-name shelters-bastion`
