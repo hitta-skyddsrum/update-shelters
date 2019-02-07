@@ -59,6 +59,7 @@ func handler(ctx context.Context, s3Event events.S3Event) {
   if err != nil {
     panic(err)
   }
+  defer db.Close()
   fmt.Println("Database connection open to %s.", os.Getenv("DB_ADDRESS"))
 
   ImportCsvToMysql(db, schema, cPath)
