@@ -13,7 +13,7 @@ func TestMigrateImportSuccess(t *testing.T) {
   }
   defer db.Close()
   schemaName := "20180909"
-  fileName := fmt.Sprintf("%s.csv", schemaName)
+  fileName := fmt.Sprintf("/var/data/%s.csv", schemaName)
   mgrStmts := "INSERT cool stuff"
 
   mock.ExpectBegin()
@@ -23,7 +23,7 @@ func TestMigrateImportSuccess(t *testing.T) {
   mock.ExpectExec(fmt.Sprintf("LOAD DATA LOCAL INFILE '%s'", fileName)).WillReturnResult(sqlmock.NewResult(1, 1))
   mock.ExpectCommit()
 
-  ImportCsvToMysql(db, mgrStmts, fmt.Sprintf("%s.csv", schemaName))
+  ImportCsvToMysql(db, mgrStmts, fileName)
 
   if err := mock.ExpectationsWereMet(); err != nil {
     t.Errorf("Tests failed: %s", err)
