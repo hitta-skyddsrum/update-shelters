@@ -51,7 +51,7 @@ func ImportCsvToMysql (db *sql.DB, mgrStmts string, csvPath string) {
     panic(err)
   }
 
-  sqlSchema := reg.ReplaceAllString(strings.TrimSuffix(csvPath, filepath.Ext(csvPath)), "")
+  sqlSchema := reg.ReplaceAllString(strings.TrimSuffix(filepath.Base(csvPath), filepath.Ext(csvPath)), "")
   tx, err := db.Begin()
   if err != nil {
     fmt.Printf("Failed to create transaction: %s", err)
