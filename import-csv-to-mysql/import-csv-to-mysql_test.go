@@ -1,10 +1,27 @@
 package main
 
 import (
+  "database/sql/driver"
   "fmt"
   "gopkg.in/DATA-DOG/go-sqlmock.v1"
+  "regexp"
   "testing"
 )
+
+type TimeMatcher  struct{}
+
+func (t TimeMatcher) Match(v driver.Value) bool {
+  m, err := regexp.MatchString("((19|20)\\d\\d)-(0?[1-9]|1[012])-(0?[1-9]|[12][0-9]|3[01])", v.(string))
+  if err != nil {
+    panic(err)
+  }
+
+  if m == false {
+    fmt.Printf("Asserted %s to match", v)
+  }
+
+  return m
+}
 
 func TestMigrateImportSuccess(t *testing.T) {
   db, mock, err := sqlmock.New()
@@ -21,6 +38,9 @@ func TestMigrateImportSuccess(t *testing.T) {
   mock.ExpectExec(fmt.Sprintf("USE `%s`", schemaName)).WillReturnResult(sqlmock.NewResult(1, 1))
   mock.ExpectExec(mgrStmts).WillReturnResult(sqlmock.NewResult(1, 1))
   mock.ExpectExec(fmt.Sprintf("LOAD DATA LOCAL INFILE '%s'", fileName)).WillReturnResult(sqlmock.NewResult(1, 1))
+
+  mock.ExpectExec("USE `db_metadata`").WillReturnResult(sqlmock.NewResult(0, 0))
+  mock.ExpectExec(regexp.QuoteMeta("INSERT INTO `datasets` (name, published_at, is_verified) VALUES (?, ?, ?)")).WithArgs(schemaName, TimeMatcher{}, false).WillReturnResult(sqlmock.NewResult(1, 1))
   mock.ExpectCommit()
 
   ImportCsvToMysql(db, mgrStmts, fileName)

@@ -7,6 +7,7 @@ import (
   "path/filepath"
   "regexp"
   "strings"
+  "time"
 )
 
 func prepareDb(schema string, mgrStmts string, tx *sql.Tx) {
@@ -72,4 +73,15 @@ func ImportCsvToMysql (db *sql.DB, mgrStmts string, csvPath string) {
 
   prepareDb(sqlSchema, mgrStmts, tx)
   loadCsvToDb(csvPath, tx)
+
+  _, err = tx.Exec("USE `db_metadata`")
+  if err != nil {
+    panic(err)
+  }
+
+  _, err = tx.Exec("INSERT INTO `datasets` (name, published_at, is_verified) VALUES (?, ?, ?)", sqlSchema, time.Now().UTC().String(), false)
+  if err != nil {
+    fmt.Printf("Failed to add record to db_metadata: %s", err)
+    panic(err)
+  }
 }
