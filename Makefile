@@ -13,3 +13,6 @@ lambda:
 
 clean:
 	rm -rf bin/*
+
+test:
+	go test ./import-csv-to-mysql
