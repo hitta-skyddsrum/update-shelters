@@ -4,15 +4,13 @@ package main
 
 import (
   "database/sql"
-  "flag"
   "fmt"
+  _ "github.com/go-sql-driver/mysql"
   "github.com/hitta-skyddsrum/update-shelters/db-flags"
 )
 
 func main() {
   dbU, dbP, dbA := dbFlags.GetDbFlags()
-
-  csvFile := flag.Args()[0]
 
   db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@(%s)/", *dbU, *dbP, *dbA))
   if err != nil {
@@ -20,5 +18,5 @@ func main() {
   }
   fmt.Println("Database connection open.")
 
-  ImportCsvToMysql(db, schema, csvFile)
+  MigrateDb(db)
 }
