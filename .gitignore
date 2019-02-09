@@ -10,3 +10,4 @@ vendor
 database/data
 
 *.swp
+.DS_STORE
