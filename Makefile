@@ -10,7 +10,7 @@ build:
 lambda:
 	$(lambda_env_vars) go build -i -ldflags="-s -w" -o lambda-bin/shape-to-csv -tags lambda ./shape-to-csv
 	$(lambda_env_vars) go build -i -ldflags="-s -w" -o lambda-bin/import-csv-to-mysql -tags lambda ./import-csv-to-mysql
-	$(lambda_env_vars) go build -i -ldflags '-d -s -w' -o lambda-bin/migrate-db -tags lambda ./migrate-db
+	$(lambda_env_vars) go build -i -ldflags="-s -w" -o lambda-bin/migrate-db -tags lambda ./migrate-db
 
 dry-deploy:
 	serverless deploy --noDeploy
