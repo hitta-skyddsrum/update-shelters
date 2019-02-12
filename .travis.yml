@@ -1,0 +1,21 @@
+language: go
+go:
+- 1.11.x
+env:
+  global:
+  - BUCKET_NAME=update-shelters-${TRAVIS_BRANCH}
+  - secure: g7lk2HhNinqrPYhkJa4OnHzw7sQBoIPOdkQolvdsHAZRCTAiI70lgivg2pyTCvspLtRHmUD/1GYOO1qnApKZkjN29cJH7J7qJKbcGZQsUxZkL6osxG62RfCtdsrnIRhpHrwG5aJH8PtbsxihvRTxjaLjRwUj6c5yqpX/ucz6SCA05DdXVTuaz8cFi++FmEORWN+8bkH+6X8OTGfdkdGCQ5joCr+lcj4gz3QNB660M5SvDgfsiKRKJ8AKbxrvqjdbniRsygaUSv/0/m4Uiei8hocq1+7EvLzCQJBvBvGIpSD/W82KW6f4g8WGPJxFFNRjwbXaqwCN9jg1SSJ1yLCL014oEaMTvt7be9jDQuN3PvISw2jZtLqOkzKWZRe+oSfga2O317Ec8KsFfni4tzHEpvx7aDSUk2knxDKeFWC/m9uKmslBGmCDZVIOLjtm8FubjpDXVnwbCTL0UaV62tWBlMQNvxq+wqmGlLSd5xzrcAb3LupA2J5Uzt7FtC56NnKwggZ69cLyxrmIkO+EAtw49ONEHBoN+ilrQTqB75W9u8vxOoqsrjgakseN4AIGACre8A0piTCFlFCf3pyUWRCDO/Y0t/WIueduv/y490DV8gxehDUKwfet380Ipew1ByORPcxjukRLA4+tHaMLw9awIFyggkdDHSjlxd8yxzIUyXU=
+  - secure: p1GCEXsb4nv1aMOtXVBdiwV56A+ZHPqeA5qzMk94cb5iH/SKx1gC3snja/J+DZgC21NIEzSJIS4/jq72xJkU08yT3mGwSTyKzRy4/VGIxWPRVtI6NphwIXb5B6n8VTngEy42IvUv81GRG7WznATpnutTrCJPY7Nf+lIn/O0EgJ1NqJSmJZIbKPjLd56Tyv4D9GFBxi6RfoJ/niBUvrh5auJ3cknWxKH3Cz3+36WH7aUvI+EB9cOv+ywKIRYvk0C6YSKFDY3YjgJ0yFs7j23XJyq5vOu96L82UwvqtxGOr3lfPWlCIzbelmJh5+yP34nH0Ha/vQBVpqYvL3OX8xKaKZ+5dyiprO4eS2mwzQ6Qw3V5xBDwtZOCor7JFKzFdvd3Cux3PgupPMxdge7OO2o43VPALtQBfHCG8witRHc7ruSooZyJXIhFuJjjljqhfdMXVYPlXPxkdAVx5WH3ofaw8hXLrE0PfY+/XqKbWOkQVFy0ikYFHcW1c/DLqTXy/rbUoD2gC8MsyBtid9BUOZpN5uYYw7B6PUL/dzj5oxv46KHsP9XDBzv34GyfLScMiCjzk/ARNqdeEYY6MC3uvGOiymqa3nz7LPl0UolTCORG0dNmE9dTzRDTS3m+d+avk1k1y0umqrM15mMW2aKOypcG2KfX1OKiuA74N/rlGLQdh0E=
+install:
+- curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+- dep ensure
+jobs:
+  include:
+  - stage: test
+    script: make test && make coverage && bash <(curl -s https://codecov.io/bash)
+  - stage: build
+    script: make build
+  - script: make lambda
+    name: Build Lambda
+  - stage: dry-deploy
+    script: npm install serverless -g && make lambda && make dry-deploy
