@@ -21,3 +21,6 @@ clean:
 test:
 	go test ./import-csv-to-mysql
 	go test ./migrate-db
+
+coverage:
+	./tools/coverage.sh

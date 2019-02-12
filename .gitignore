@@ -9,5 +9,7 @@ lambda-bin
 vendor
 database/data
 
+coverage.txt
+
 *.swp
 .DS_STORE
