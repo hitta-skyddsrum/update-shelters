@@ -1,0 +1,9 @@
+Verifiera att det går att ta bort stack
+
+Integrering med API:
+* API läser av senaste dataset från databasen Metadata
+När databasen är uppdaterad med ny information:
+1. Driftsätt en instrumentbräda där man loggar in med GH.
+1. Trigga ett Travis-bygge för att verifiera e2e-tester.
+1. Kolla igenom sidan att den ser ok ut.
+1. Från instrumentbrädan: Slå på det nya datasettet.

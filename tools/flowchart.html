@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <title>Uppdatera skyddsrum</title>
+    <link rel="stylesheet" type="text/css" href="https://bramp.github.io/js-sequence-diagrams/css/sequence-diagram-min.css" media="screen" />
+    
+  </head>
+  <body>
+    <div id="diagram"></div>
+    <canvas id="canvas"></canvas>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webfont/1.6.28/webfontloader.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/sequence-diagram-snap-min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stackblur-canvas/1.4.1/stackblur.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvg@2.0.0-beta.0/dist/browser/canvg.min.js"></script>
+
+
+    <script>
+      performance.mark('start');
+      const convertSvgToCanvas = (diagramElem) => {
+        console.info('Påbörjar konvertering till canvas...');
+        // Lägg till vit bakgrund
+        const svgElem = diagramElem.querySelector('svg');
+        const bgElem = document.createElement('rect');
+        bgElem.setAttributeNS(null, 'width', svgElem.getBoundingClientRect().width);
+        bgElem.setAttributeNS(null, 'height', svgElem.getBoundingClientRect().height);
+        bgElem.setAttributeNS(null, 'fill', 'white');
+        svgElem.insertBefore(bgElem, svgElem.firstChild);
+
+        // Konvertera till canvas
+        const canvasElem = document.getElementById('canvas');
+        const ctx = canvasElem.getContext('2d');
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvasElem.width, canvasElem.height);
+        canvg(canvasElem, diagramElem.innerHTML, { ignoreMouse: true, renderCallback: () => {
+          console.info('Tar bort SVG-bild...');
+          diagramElem.style.display = 'none';
+
+          performance.mark('end');
+          performance.measure('measure', 'start', 'end');
+
+          const [{ duration }] = performance.getEntriesByName('measure');
+          console.info(`Klart efter ${duration/1000} sekunder.`);
+        }})
+      };
+
+      const observer = new MutationObserver((mutationList) => {
+        const relevantMutation = mutationList.find(m => m.type === 'childList');
+        if (!relevantMutation) return;
+
+        convertSvgToCanvas(relevantMutation.target);
+        observer.disconnect();
+      });
+
+      console.info('Väntar på att sekvensdiagram i SVG ska skapas...');
+      observer.observe(document.querySelector('#diagram'), {childList: true, subtree: true});
+
+      const sequence = `
+        Title: Hitta Skyddsrum shelters-modul
+        participant MSB
+        "update-shelters"->MSB: Kolla efter ny data
+        MSB->"update-shelters": Ny data finns
+        "update-shelters"->MSB: Ladda ner Shape-fil
+        "update-shelters"->"AWS S3": Ladda upp Shape-fil
+        "AWS S3"->"shape-to-csv": Ny Shape-fil finns
+        "shape-to-csv"->"AWS S3": Laddar upp CSV-fil
+        "AWS S3"->"import-csv-to-mysql": Ny CSV-fil finns
+        "import-csv-to-mysql"->"AWS S3": Ladda ner CSV-fil
+        "import-csv-to-mysql"->"Shelters DB": Importera CSV
+        "import-csv-to-mysql"->"dashboard": Driftsätt dashboard
+        "dashboard"->"Travis": Kör E2E-tester för API
+        "dashboard"->"Travis": Kör E2E-tester för klient
+        "Admin-användare"->"dashboard": Aktivera nytt dataset
+      `;
+      const diagram = Diagram.parse(sequence);
+      diagram.drawSVG("diagram", {theme: 'simple'});
+    </script>
+  </body>
+</html>
