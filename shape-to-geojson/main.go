@@ -72,6 +72,8 @@ func StoreJson(byteJson []byte) {
 func main() {
   listFields := flag.Bool("list-fields", false, "List all fields in shapefile")
   showExample := flag.Bool("show-example", false, "Show an example shape from the shapefile")
+  outputCsv := flag.Bool("csv", false, "Output CSV file")
+  outputGeoJson := flag.Bool("geojson", false, "Output GeoJSON file")
   flag.Parse()
 
   shapefile := flag.Args()[0]
@@ -93,15 +95,24 @@ func main() {
     os.Exit(0)
   }
 
-  mappings := MapShapeFields(zipShape)
+  if *outputGeoJson == true {
+    mappings := MapShapeFields(zipShape)
 
-  fmt.Print("Will use the following mappings: ", mappings)
-  fmt.Println()
+    fmt.Print("Will use the following mappings: ", mappings)
+    fmt.Println()
 
-  nrShelters, shelters := ShapeToGeoJson(zipShape, mappings)
+    nrShelters, shelters := ShapeToGeoJson(zipShape, mappings)
 
-  StoreJson(shelters)
+    StoreJson(shelters)
 
-  fmt.Printf("Successfully wrote %d shapes to JSON", nrShelters)
-  fmt.Println()
+    fmt.Printf("Successfully wrote %d shapes to JSON", nrShelters)
+    fmt.Println()
+  }
+
+  if *outputCsv {
+    nrShelters := ShapeToSql(zipShape)
+
+    fmt.Printf("Successfully wrote %d shapes to CSV", nrShelters)
+    fmt.Println()
+  }
 }

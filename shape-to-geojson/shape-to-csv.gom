@@ -1,0 +1,78 @@
+package main
+
+import (
+	"github.com/gocarina/gocsv"
+  "github.com/jonas-p/go-shp"
+  "reflect"
+  "fmt"
+)
+
+type Shelter struct {
+  lat       float64     `csv:"lat"`
+  long      float64     `csv:"long"`
+}
+
+func setCsvTags(shelter interface{}) interface{} {
+  st := reflect.TypeOf(shelter)
+  fmt.Println("Type:", st)
+  if st == nil {
+    panic("shelter interface is nil")
+  }
+  fs := []reflect.StructField{}
+
+  for i := 0; i < st.NumField(); i++ {
+    f := st.Field(i)
+    f.Tag = reflect.StructTag(`csv:"-"`)
+    fs = append(fs, f)
+  }
+
+  st2 := reflect.StructOf(fs)
+
+  v := reflect.ValueOf(shelter)
+  v2 := v.Convert(st2)
+
+  return v2
+}
+
+func ShapeToCsv(zipShape *shp.ZipReader, mappings map[string]interface{}) (int, []byte) {
+	// shelters := []*Client{}
+	shelters := make([]interface{}, 0)
+  nrShapes := 0
+
+  fields := zipShape.Fields()
+
+  for zipShape.Next() {
+    _, shape := zipShape.Shape()
+
+    if shape.BBox().MinX != shape.BBox().MaxX {
+      panic("Failed to validate Shelter geo data")
+    }
+
+    if shape.BBox().MinY != shape.BBox().MaxY {
+      panic("Failed to validate Shelter geo data")
+    }
+
+    shelter := Shelter{}
+    c := Sweref99ToLatLon([2]float64{shape.BBox().MinX, shape.BBox().MinY})
+    shelter["lat"] = c[0]
+    shelter["long"] = c[1]
+
+    for k, f := range fields {
+      val := zipShape.Attribute(k)
+      name := mappings[f.String()].(string)
+      shelter[name] = val
+      fmt.Println("Name:", name)
+    }
+
+    shelters = append(shelters, setCsvTags(shelter))
+    nrShapes++
+  }
+
+  csvContent, err := gocsv.MarshalBytes(&shelters)
+
+  if err != nil {
+    panic("CSV creation failed")
+  }
+
+  return nrShapes, csvContent
+}

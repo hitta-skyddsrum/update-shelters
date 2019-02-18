@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/JamesStewy/go-mysqldump"
+  packages = ["."]
+  revision = "e653992bbc95dad57f001779aef03e4408a5f008"
+  version = "v0.2.2"
+
+[[projects]]
   name = "github.com/aws/aws-lambda-go"
   packages = [
     "lambda",
@@ -10,6 +16,12 @@
   ]
   revision = "6e2e37798efbb1dfd8e9c6681702e683a6046517"
   version = "v1.0.1"
+
+[[projects]]
+  name = "github.com/go-sql-driver/mysql"
+  packages = ["."]
+  revision = "a0583e0143b1624142adab07e0e97fe106d99561"
+  version = "v1.3"
 
 [[projects]]
   name = "github.com/im7mortal/UTM"
@@ -26,6 +38,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4706b86c3c191d0c71bf9f13e25b43164448868381c8c5137df391ee46b98fa6"
+  inputs-digest = "76c7515cc43b44efe20f4216e066111f0fa567ab637162d0cfa514ce898d324e"
   solver-name = "gps-cdcl"
   solver-version = 1

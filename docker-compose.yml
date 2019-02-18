@@ -1,5 +1,23 @@
 version: "3.2"
 services:
+  gdal:
+    image: geodata/gdal
+    links:
+      - mysql
+    volumes:
+      - type: bind
+        source: "$SHELTERS_SHAPEFILE"
+        target: "/usr/src/shelters.shp"
+
+  mysql:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: hitta_skyddsrum
+      MYSQL_ROOT_PASSWORD: hitta
+    ports:
+      - 3306:3306
+
   database:
     image: kontrollanten/couchdb-hastings:latest
     environment:
