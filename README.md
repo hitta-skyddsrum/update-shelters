@@ -15,6 +15,12 @@ Usage of bin/parse-shapefile:
     	Show an example shape from the shapefile
 ```
 
+## Deploy
+```
+aws cloudformation package --template-file cloudformation.yml --s3-bucket update-shelters-deploy-bucket --output-template cf-packaged.yml
+aws cloudformation deploy --stack-name update-shelters --template-file cf-packaged.yml --capabilities CAPABILITY_IAM --parameter-overrides BucketName= DbMasterUser=DbMasterPassword=
+```
+
 ## Read shapefile manually
 1. Open QGIS
 1. Select Layer > Add Layer > Add Vector Layer

@@ -1,0 +1,256 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: An AWS Serverless Specification template describing your function.
+
+Parameters:
+  BucketName:
+    Type: String
+  DbMasterUser:
+    Type: String
+  DbMasterPassword:
+    Type: String
+
+
+Resources:
+  S3BucketSheltersBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: "s3:ObjectCreated:*"
+            Function: !GetAtt [ ShapeToCsvLambdaFunction, Arn ]
+            Filter:
+              S3Key:
+                Rules:
+                  -
+                    Name: suffix
+                    Value: zip
+          - Event: "s3:ObjectCreated:*"
+            Function: !GetAtt [ ImportCsvToMysqlLambdaFunction, Arn ]
+            Filter:
+              S3Key:
+                Rules:
+                  -
+                    Name: suffix
+                    Value: csv
+  ImportCsvToMysqlPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt [ ImportCsvToMysqlLambdaFunction, Arn ]
+      Action: "lambda:InvokeFunction"
+      Principal: "s3.amazonaws.com"
+      SourceArn: !Join [ "", [  "arn:aws:s3:::", !Ref BucketName ] ]
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              AWS: "*"
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - 
+          PolicyName: "SheltersLambdaExecRole"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - ec2:CreateNetworkInterface
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DeleteNetworkInterface
+                Resource: "*"
+              - 
+                Effect: "Allow"
+                Action:
+                  - rds:CreateDBInstance
+                  - rds:DeleteDBInstance
+                Resource: !Join  ["", ["arn:aws:rds:::", !Ref SheltersDB ] ]
+              -
+                Effect: "Allow"
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource: !Join [ "", [  "arn:aws:s3:::", !Ref BucketName, "*" ] ]
+              -
+                Effect: "Allow"
+                Action:
+                  - s3:ListBucket
+                Resource: !Join [ "", [  "arn:aws:s3:::", !Ref BucketName ] ]
+  ShapeToCsvPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt [ ShapeToCsvLambdaFunction, Arn ]
+      Action: "lambda:InvokeFunction"
+      Principal: "s3.amazonaws.com"
+      SourceArn: !Join [ "", [  "arn:aws:s3:::", !Ref BucketName ] ]
+  SheltersDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: 5
+      DBInstanceClass: db.t2.micro
+      DBSubnetGroupName: !Ref SheltersDBSubnetGroup
+      VPCSecurityGroups:
+        - !GetAtt [ SheltersVPCSecurityGroup, GroupId ]
+      Engine: MySQL
+      MasterUsername: !Ref DbMasterUser
+      MasterUserPassword: !Ref DbMasterPassword
+  SheltersDBMigrationTrigger:
+    Type: Custom::DBMigration
+    DependsOn:
+      - SheltersDB
+      - SheltersVPCS3Endpoint
+    Properties:
+      ServiceToken: !GetAtt
+        - DbMigrationLambdaFunction
+        - Arn
+  SheltersDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: "Subnet for DB connections"
+      SubnetIds:
+        - Ref: SheltersSubnet1
+        - Ref: SheltersSubnet2
+  SheltersSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [ 0, !GetAZs "" ]
+      CidrBlock: 10.0.1.0/24
+      VpcId: !Ref SheltersVPC
+  SheltersSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [ 1, !GetAZs "" ]
+      CidrBlock: 10.0.2.0/24
+      VpcId: !Ref SheltersVPC
+  SheltersVPCSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for DB connections"
+      VpcId: !Ref SheltersVPC
+  SheltersVPCSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref SheltersVPCSecurityGroup
+      IpProtocol: tcp
+      FromPort: "3306"
+      ToPort: "3306"
+      SourceSecurityGroupId: !Ref SheltersVPCSecurityGroup
+  SheltersVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+  SheltersRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref SheltersVPC
+  SheltersSubnet1Association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SheltersSubnet1
+      RouteTableId: !Ref SheltersRouteTable
+  SheltersSubnet2Association:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SheltersSubnet2
+      RouteTableId: !Ref SheltersRouteTable
+  SheltersVPCS3Endpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref SheltersVPC
+      PolicyDocument: "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"*\",\"Resource\":\"*\"}]}"
+      RouteTableIds:
+        - !Ref SheltersRouteTable
+      ServiceName: !Join ["", ["com.amazonaws.", !Ref "AWS::Region", ".s3"]]
+  DbMigrationLambdaFunction:
+    Type: "AWS::Serverless::Function"
+    DependsOn:
+      - SheltersVPCS3Endpoint
+    Properties:
+      Handler: migrate-db
+      Runtime: go1.x
+      CodeUri: ./deploy/migrate-db.zip
+      Description: ""
+      MemorySize: 1024
+      Timeout: 6
+      Role: !GetAtt [ LambdaRole, Arn ]
+      VpcConfig:
+        SecurityGroupIds:
+          - Ref: SheltersVPCSecurityGroup
+        SubnetIds:
+          - !Ref SheltersSubnet1
+          - !Ref SheltersSubnet2
+      Environment:
+        Variables:
+          DB_MASTER_USER: !Ref DbMasterUser
+          DB_MASTER_PASSWORD: !Ref DbMasterPassword
+          DB_ADDRESS: !GetAtt [ SheltersDB, Endpoint.Address ]
+  ImportCsvToMysqlLambdaFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: import-csv-to-mysql
+      Runtime: go1.x
+      CodeUri: ./deploy/import-csv-to-mysql.zip
+      MemorySize: 1024
+      Timeout: 300
+      Role: !GetAtt [ LambdaRole, Arn ]
+      Events:
+        BucketEvent1:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: Bucket1
+            Events:
+              - "s3:ObjectCreated:*"
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: suffix
+                    Value: csv
+      VpcConfig:
+        SecurityGroupIds:
+          - Ref: SheltersVPCSecurityGroup
+        SubnetIds:
+          - !Ref SheltersSubnet1
+          - !Ref SheltersSubnet2
+      Environment:
+        Variables:
+          DB_MASTER_USER: !Ref DbMasterUser
+          DB_MASTER_PASSWORD: !Ref DbMasterPassword
+          DB_ADDRESS:
+            !GetAtt [ SheltersDB, Endpoint.Address ]
+  Bucket1:
+    Type: 'AWS::S3::Bucket'
+  ShapeToCsvLambdaFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: shape-to-csv
+      Runtime: go1.x
+      CodeUri: ./deploy/shape-to-csv.zip
+      MemorySize: 1024
+      Timeout: 6
+      Role: !GetAtt [ LambdaRole, Arn ]
+      Events:
+        BucketEvent1:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: Bucket2
+            Events:
+              - "s3:ObjectCreated:*"
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: suffix
+                    Value: zip
+  Bucket2:
+    Type: 'AWS::S3::Bucket'
