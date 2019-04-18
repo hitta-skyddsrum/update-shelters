@@ -1,5 +1,4 @@
-# Serverless directories
-.serverless
+deploy
 
 # golang output binary directory
 bin
