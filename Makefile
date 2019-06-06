@@ -6,6 +6,7 @@ build:
 	go build -i -ldflags="-s -w" -o bin/check ./check-for-updates
 	go build -i -ldflags="-s -w" -o bin/shape-to-csv ./shape-to-csv
 	go build -i -ldflags="-s -w" -o bin/import-csv-to-mysql ./import-csv-to-mysql
+	go build -i -ldflags="-s -w" -o bin/rest-api ./rest-api
 
 lambda:
 	$(lambda_env_vars) go build -i -ldflags="-s -w" -o lambda-bin/shape-to-csv -tags lambda ./shape-to-csv
@@ -21,6 +22,7 @@ clean:
 test:
 	go test ./import-csv-to-mysql
 	go test ./migrate-db
+	go test ./rest-api
 
 coverage:
 	./tools/coverage.sh

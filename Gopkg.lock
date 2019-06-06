@@ -9,7 +9,7 @@
     "events",
     "lambda",
     "lambda/messages",
-    "lambdacontext",
+    "lambdacontext"
   ]
   pruneopts = ""
   revision = "527f5d301d2993af078be6d0b63372786b3fc18f"
@@ -54,11 +54,19 @@
     "service/s3",
     "service/s3/s3iface",
     "service/s3/s3manager",
-    "service/sts",
+    "service/sts"
   ]
   pruneopts = ""
   revision = "aabf189db35ba7eb5a35afe6d681fc0f70954fca"
   version = "v1.16.18"
+
+[[projects]]
+  digest = "1:0deddd908b6b4b768cfc272c16ee61e7088a60f7fe2f06c547bd3d8e1f8b8e77"
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  pruneopts = ""
+  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
+  version = "v1.1.1"
 
 [[projects]]
   digest = "1:e692d16fdfbddb94e9e4886aaf6c08bdbae5cb4ac80651445de9181b371c6e46"
@@ -67,6 +75,25 @@
   pruneopts = ""
   revision = "72cd26f257d44c1114970e19afddcd812016007e"
   version = "v1.4.1"
+
+[[projects]]
+  digest = "1:65c7ed49d9f36dd4752e43013323fa9229db60b29aa4f5a75aaecda3130c74e2"
+  name = "github.com/gorilla/mux"
+  packages = ["."]
+  pruneopts = ""
+  revision = "c5c6c98bc25355028a63748a498942a6398ccd22"
+  version = "v1.7.1"
+
+[[projects]]
+  branch = "master"
+  digest = "1:228a9f4ee6539c5b87b2bee74b40a0994012ccc80bfaaa9c6077f963250ac95b"
+  name = "github.com/hitta-skyddsrum/update-shelters"
+  packages = [
+    "db-flags",
+    "sweref99-to-latlon"
+  ]
+  pruneopts = ""
+  revision = "3fa668aa39a05cb2a89b75d3e5ed03d863c9efeb"
 
 [[projects]]
   digest = "1:cbe4bd41d6678b8b5ecff13e9bc92406938bc227bddc94c32985d2acde8903f7"
@@ -90,6 +117,33 @@
   pruneopts = ""
   revision = "215a5781289c857f70b19c2740e65d81de343b50"
   version = "v0.1.1"
+
+[[projects]]
+  digest = "1:256484dbbcd271f9ecebc6795b2df8cad4c458dd0f5fd82a8c2fa0c29f233411"
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  pruneopts = ""
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:711eebe744c0151a9d09af2315f0bb729b2ec7637ef4c410fa90a18ef74b65b6"
+  name = "github.com/stretchr/objx"
+  packages = ["."]
+  pruneopts = ""
+  revision = "477a77ecc69700c7cdeb1fa9e129548e1c1c393c"
+  version = "v0.1.1"
+
+[[projects]]
+  digest = "1:381bcbeb112a51493d9d998bbba207a529c73dbb49b3fd789e48c63fac1f192c"
+  name = "github.com/stretchr/testify"
+  packages = [
+    "assert",
+    "mock"
+  ]
+  pruneopts = ""
+  revision = "ffdc059bfe9ce6a4e144ba849dbedead332c6053"
+  version = "v1.3.0"
 
 [[projects]]
   digest = "1:77d3cff3a451d50be4b52db9c7766c0d8570ba47593f0c9dc72173adb208e788"
@@ -118,9 +172,13 @@
     "github.com/aws/aws-sdk-go/service/s3",
     "github.com/aws/aws-sdk-go/service/s3/s3manager",
     "github.com/go-sql-driver/mysql",
+    "github.com/gorilla/mux",
+    "github.com/hitta-skyddsrum/update-shelters/db-flags",
+    "github.com/hitta-skyddsrum/update-shelters/sweref99-to-latlon",
     "github.com/im7mortal/UTM",
     "github.com/jonas-p/go-shp",
-    "gopkg.in/DATA-DOG/go-sqlmock.v1",
+    "github.com/stretchr/testify/mock",
+    "gopkg.in/DATA-DOG/go-sqlmock.v1"
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
