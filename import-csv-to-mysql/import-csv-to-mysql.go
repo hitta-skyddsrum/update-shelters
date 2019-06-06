@@ -38,7 +38,8 @@ func loadCsvToDb(filePath string, tx *sql.Tx) {
     "FIELDS TERMINATED BY ',' " +
     "OPTIONALLY ENCLOSED BY '\"' " +
     "LINES TERMINATED BY '\n' " +
-    "IGNORE 1 LINES",
+    "IGNORE 1 LINES " +
+    "(estate_id, begin_life, end_life, inspire_id, shelter_id, slots, pointOfCon, relatedPar, filter_type, address, city, municipality, serviceLev, service_type, type_of_occupation, @ignore, position_lat, position_long)",
   filePath))
   if err != nil {
     panic(err)
