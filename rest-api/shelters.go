@@ -47,15 +47,15 @@ func getSheltersFromRows(rows *sql.Rows) ([]Shelter, error) {
 }
 
 func (a *App) GetSheltersByBBox (w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
+  params := r.URL.Query()
 
-	if params == nil {
+  if params.Get("bbox") == "" {
     a.RespondWithError(w, 422, "bbox-parametern är obligatorisk")
     return
 	}
 
-	bbox := strings.Split(params["bbox"], ",")
-	if len(bbox) != 4 {
+  bbox := strings.Split(params.Get("bbox"), ",")
+  if len(bbox) != 4 {
     fmt.Printf("%d %v", len(bbox), params["bbox"])
     a.RespondWithError(w, 422, "bbox-parametern har för få värden")
     return
