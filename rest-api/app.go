@@ -23,7 +23,7 @@ func (a *App) respondWithJSON(w http.ResponseWriter, code int, payload interface
 }
 
 func main() {
-	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@(%s)", os.Getenv("MYSQL_USERNAME"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_ADDRESS")))
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@(%s)/%s", os.Getenv("MYSQL_USERNAME"), os.Getenv("MYSQL_PASSWORD"), os.Getenv("MYSQL_ADDRESS"), os.Getenv("MYSQL_DATABASE_NAME")))
 	if err != nil {
 		panic(err)
 	}
