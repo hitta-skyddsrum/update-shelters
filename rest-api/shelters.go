@@ -61,7 +61,7 @@ func (a *App) GetSheltersByBBox (w http.ResponseWriter, r *http.Request) {
     return
 	}
 
-	rows, err := a.DB.Query("SELECT "+ShelterFields+" FROM `shelters` WHERE position_long > `?` AND position_lat > `?` AND position_long < `?` AND position_lat < `?`", bbox[0], bbox[1], bbox[2], bbox[3])
+  rows, err := a.DB.Query("SELECT " + ShelterFields + " FROM `shelters` WHERE position_long > ? AND position_lat > ? AND position_long < ? AND position_lat < ?", bbox[0], bbox[1], bbox[2], bbox[3])
 	if err != nil {
     fmt.Printf("Selecting shelters failed: %s\n", err)
     a.RespondWithError(w, 500, "Någonting gick fel, försök igen")
