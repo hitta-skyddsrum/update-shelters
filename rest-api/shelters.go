@@ -9,20 +9,25 @@ import (
 )
 
 type Shelter struct {
-	address       string
-	city          string
-	municipality  string
-	position_lat  string
-	position_long string
-	shelter_id    string
-	slots         int
+  Address           string    `json:"address"`
+  City              string    `json:"city"`
+  Estate_id         string    `json:"estateId"`
+  Filter_type       string    `json:"filterType"`
+  Id                string    `json:"id"`
+  Municipality      string    `json:"municipality"`
+  Position          struct    {
+    Lat             string    `json:"lat"`
+    Long            string    `json:"long"`
+  }                           `json:"position"`
+  Shelter_id        string    `json:"shelterId"`
+  Slots             int       `json:"slots"`
 }
 
-var ShelterFields = "address, city, municipality, position_lat, position_long, shelter_id, slots"
+var ShelterFields = "address, city, estate_id, filter_type, municipality, position_lat, position_long, shelter_id, slots"
 
-func getShelterFromRow(row interface{ Scan(...interface{}) error }) (Shelter, error) {
-	s := Shelter{}
-	err := row.Scan(&s.address, &s.city, &s.municipality, &s.position_lat, &s.position_long, &s.shelter_id, &s.slots)
+func getShelterFromRow(row interface{ Scan(...interface{}) (error) }) (Shelter, error) {
+  s := Shelter{}
+  err := row.Scan(&s.Address, &s.City, &s.Estate_id, &s.Filter_type, &s.Municipality, &s.Position.Lat, &s.Position.Long, &s.Shelter_id, &s.Slots)
 
 	return s, err
 }
