@@ -8,19 +8,21 @@ import (
 	"strings"
 )
 
+type Position struct {
+	Lat  string `json:"lat"`
+	Long string `json:"long"`
+}
+
 type Shelter struct {
-  Address           string    `json:"address"`
-  City              string    `json:"city"`
-  Estate_id         string    `json:"estateId"`
-  Filter_type       string    `json:"filterType"`
-  Id                string    `json:"id"`
-  Municipality      string    `json:"municipality"`
-  Position          struct    {
-    Lat             string    `json:"lat"`
-    Long            string    `json:"long"`
-  }                           `json:"position"`
-  Shelter_id        string    `json:"shelterId"`
-  Slots             int       `json:"slots"`
+	Address      string   `json:"address"`
+	City         string   `json:"city"`
+	Estate_id    string   `json:"estateId"`
+	Filter_type  string   `json:"filterType"`
+	Id           string   `json:"id"`
+	Municipality string   `json:"municipality"`
+	Position     Position `json:"position"`
+	Shelter_id   string   `json:"shelterId"`
+	Slots        int      `json:"slots"`
 }
 
 var ShelterFields = "address, city, estate_id, filter_type, municipality, position_lat, position_long, shelter_id, slots"
