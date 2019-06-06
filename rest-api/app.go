@@ -4,9 +4,12 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 type App struct {
@@ -18,8 +21,7 @@ type ErrorResponse struct {
   Message     string `json:"message"`
 }
 
-
-func (a *App) respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+func (a *App) RespondWithJson(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 
 	w.Header().Set("Content-Type", "application/json")

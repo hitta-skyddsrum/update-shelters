@@ -27,7 +27,7 @@ type Shelter struct {
 
 var ShelterFields = "address, city, estate_id, filter_type, municipality, position_lat, position_long, shelter_id, slots"
 
-func getShelterFromRow(row interface{ Scan(...interface{}) (error) }) (Shelter, error) {
+func getShelterFromRow(row interface{ Scan(...interface{}) error }) (Shelter, error) {
   s := Shelter{}
   err := row.Scan(&s.Address, &s.City, &s.Estate_id, &s.Filter_type, &s.Municipality, &s.Position.Lat, &s.Position.Long, &s.Shelter_id, &s.Slots)
 
