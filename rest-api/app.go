@@ -14,12 +14,25 @@ type App struct {
 	DB     *sql.DB
 }
 
+type ErrorResponse struct {
+  Message     string `json:"message"`
+}
+
+
 func (a *App) respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	w.Write(response)
+}
+
+func (a *App) RespondWithError(w http.ResponseWriter, code int, message string) {
+  response := ErrorResponse{
+    Message: message,
+  }
+
+  a.RespondWithJson(w, code, response)
 }
 
 func main() {
