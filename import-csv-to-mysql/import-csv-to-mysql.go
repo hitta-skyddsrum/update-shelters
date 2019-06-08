@@ -1,88 +1,88 @@
 package main
 
 import (
-  "database/sql"
-  "fmt"
-  "github.com/go-sql-driver/mysql"
-  "path/filepath"
-  "regexp"
-  "strings"
-  "time"
+	"database/sql"
+	"fmt"
+	"github.com/go-sql-driver/mysql"
+	"path/filepath"
+	"regexp"
+	"strings"
+	"time"
 )
 
 func prepareDb(schema string, mgrStmts string, tx *sql.Tx) {
-  _, err := tx.Exec("CREATE SCHEMA `" + schema + "` CHARACTER SET utf8 COLLATE utf8_general_ci;")
-  if err != nil {
-    fmt.Printf("Failed to create schema %s", schema)
-    panic(err)
-  }
+	_, err := tx.Exec("CREATE SCHEMA `" + schema + "` CHARACTER SET utf8 COLLATE utf8_general_ci;")
+	if err != nil {
+		fmt.Printf("Failed to create schema %s", schema)
+		panic(err)
+	}
 
-  _, err = tx.Exec("USE `" + schema + "`")
-  if err != nil {
-    panic(err)
-  }
+	_, err = tx.Exec("USE `" + schema + "`")
+	if err != nil {
+		panic(err)
+	}
 
-  fmt.Println("Running database migration")
-  _, err = tx.Exec(mgrStmts)
-  if err != nil {
-    panic(err)
-  }
+	fmt.Println("Running database migration")
+	_, err = tx.Exec(mgrStmts)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func loadCsvToDb(filePath string, tx *sql.Tx) {
-  fmt.Println("Start import CSV to database.")
-  mysql.RegisterLocalFile(filePath)
-  _, err := tx.Exec(fmt.Sprintf(
-    "LOAD DATA LOCAL INFILE '%s' " +
-    "INTO TABLE shelters " +
-    "FIELDS TERMINATED BY ',' " +
-    "OPTIONALLY ENCLOSED BY '\"' " +
-    "LINES TERMINATED BY '\n' " +
-    "IGNORE 1 LINES " +
-    "(estate_id, begin_life, end_life, inspire_id, shelter_id, slots, pointOfCon, relatedPar, filter_type, address, city, municipality, serviceLev, service_type, type_of_occupation, @ignore, position_lat, position_long)",
-  filePath))
-  if err != nil {
-    panic(err)
-  }
-  fmt.Println("End import CSV to database.")
+	fmt.Println("Start import CSV to database.")
+	mysql.RegisterLocalFile(filePath)
+	_, err := tx.Exec(fmt.Sprintf(
+		"LOAD DATA LOCAL INFILE '%s' "+
+			"INTO TABLE shelters "+
+			"FIELDS TERMINATED BY ',' "+
+			"OPTIONALLY ENCLOSED BY '\"' "+
+			"LINES TERMINATED BY '\n' "+
+			"IGNORE 1 LINES "+
+			"(estate_id, begin_life, end_life, inspire_id, shelter_id, slots, pointOfCon, relatedPar, filter_type, address, city, municipality, serviceLev, service_type, type_of_occupation, @ignore, position_lat, position_long)",
+		filePath))
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("End import CSV to database.")
 }
 
-func ImportCsvToMysql (db *sql.DB, mgrStmts string, csvPath string) {
-  reg, err := regexp.Compile("[^a-zA-Z0-9]+")
-  if err != nil {
-    panic(err)
-  }
+func ImportCsvToMysql(db *sql.DB, mgrStmts string, csvPath string) {
+	reg, err := regexp.Compile("[^a-zA-Z0-9]+")
+	if err != nil {
+		panic(err)
+	}
 
-  sqlSchema := reg.ReplaceAllString(strings.TrimSuffix(filepath.Base(csvPath), filepath.Ext(csvPath)), "")
-  tx, err := db.Begin()
-  if err != nil {
-    fmt.Printf("Failed to create transaction: %s", err)
-    panic(err)
-  }
-  defer func() {
-    if r := recover(); r != nil {
-      tx.Rollback()
-      return
-    }
+	sqlSchema := reg.ReplaceAllString(strings.TrimSuffix(filepath.Base(csvPath), filepath.Ext(csvPath)), "")
+	tx, err := db.Begin()
+	if err != nil {
+		fmt.Printf("Failed to create transaction: %s", err)
+		panic(err)
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			return
+		}
 
-    err = tx.Commit()
+		err = tx.Commit()
 
-    if err != nil {
-      fmt.Printf("Commiting DB transaction failed: %s", err)
-    }
-  }()
+		if err != nil {
+			fmt.Printf("Commiting DB transaction failed: %s", err)
+		}
+	}()
 
-  prepareDb(sqlSchema, mgrStmts, tx)
-  loadCsvToDb(csvPath, tx)
+	prepareDb(sqlSchema, mgrStmts, tx)
+	loadCsvToDb(csvPath, tx)
 
-  _, err = tx.Exec("USE `db_metadata`")
-  if err != nil {
-    panic(err)
-  }
+	_, err = tx.Exec("USE `db_metadata`")
+	if err != nil {
+		panic(err)
+	}
 
-  _, err = tx.Exec("INSERT INTO `datasets` (name, published_at, is_verified) VALUES (?, ?, ?)", sqlSchema, time.Now().UTC().String(), false)
-  if err != nil {
-    fmt.Printf("Failed to add record to db_metadata: %s", err)
-    panic(err)
-  }
+	_, err = tx.Exec("INSERT INTO `datasets` (name, published_at, is_verified) VALUES (?, ?, ?)", sqlSchema, time.Now().UTC().String(), false)
+	if err != nil {
+		fmt.Printf("Failed to add record to db_metadata: %s", err)
+		panic(err)
+	}
 }

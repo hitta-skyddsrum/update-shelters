@@ -1,108 +1,107 @@
 package main
 
 import (
-  "github.com/hitta-skyddsrum/update-shelters/sweref99-to-latlon"
-  "github.com/jonas-p/go-shp"
-  "fmt"
-  "flag"
-  "os"
-  "io/ioutil"
-  "bufio"
-  "strings"
+	"bufio"
+	"flag"
+	"fmt"
+	"github.com/hitta-skyddsrum/update-shelters/sweref99-to-latlon"
+	"github.com/jonas-p/go-shp"
+	"io/ioutil"
+	"os"
+	"strings"
 )
 
 func ListFields(shape *shp.ZipReader) {
-  fields := shape.Fields()
+	fields := shape.Fields()
 
-  for k := range fields {
-    fmt.Print(fields[k])
-    fmt.Println()
-  }
+	for k := range fields {
+		fmt.Print(fields[k])
+		fmt.Println()
+	}
 }
 
 func ShowExample(zipShape *shp.ZipReader) {
-  fields := zipShape.Fields()
-  zipShape.Next()
-  _, shape := zipShape.Shape()
+	fields := zipShape.Fields()
+	zipShape.Next()
+	_, shape := zipShape.Shape()
 
-  for k, f := range fields {
-    val := zipShape.Attribute(k)
-    fmt.Printf("\t%v: %v\n", f.String(), val)
-  }
+	for k, f := range fields {
+		val := zipShape.Attribute(k)
+		fmt.Printf("\t%v: %v\n", f.String(), val)
+	}
 
-  coordinates := coordConv.Sweref99ToLatLon([2]float64{shape.BBox().MinX, shape.BBox().MinY})
-  fmt.Printf("\tLatitude: %v\n", coordinates[0])
-  fmt.Printf("\tLongitude: %v\n", coordinates[1])
+	coordinates := coordConv.Sweref99ToLatLon([2]float64{shape.BBox().MinX, shape.BBox().MinY})
+	fmt.Printf("\tLatitude: %v\n", coordinates[0])
+	fmt.Printf("\tLongitude: %v\n", coordinates[1])
 
-  fmt.Println()
+	fmt.Println()
 }
 
 func MapShapeFields(zipShape *shp.ZipReader) map[string]interface{} {
-  mappings := map[string]interface{}{
-  }
-  fields := zipShape.Fields()
+	mappings := map[string]interface{}{}
+	fields := zipShape.Fields()
 
-  fmt.Print("Map fields from shapefile to desired name:")
-  fmt.Println()
+	fmt.Print("Map fields from shapefile to desired name:")
+	fmt.Println()
 
-  for _, f := range fields {
-    reader := bufio.NewReader(os.Stdin)
-    fmt.Printf("%s [%s]:", f.String(), f.String())
-    value, _ := reader.ReadString('\n')
-    value = strings.TrimSuffix(value, "\n")
+	for _, f := range fields {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Printf("%s [%s]:", f.String(), f.String())
+		value, _ := reader.ReadString('\n')
+		value = strings.TrimSuffix(value, "\n")
 
-    if len(value) > 1 {
-      mappings[f.String()] = value
-    } else {
-      mappings[f.String()] = f.String()
-    }
+		if len(value) > 1 {
+			mappings[f.String()] = value
+		} else {
+			mappings[f.String()] = f.String()
+		}
 
-  }
+	}
 
-  return mappings
+	return mappings
 }
 
 func StoreJson(byteJson []byte) {
-  e := ioutil.WriteFile("skyddsrum.geojson", byteJson, 0644)
+	e := ioutil.WriteFile("skyddsrum.geojson", byteJson, 0644)
 
-  if e != nil {
-    panic(e)
-  }
+	if e != nil {
+		panic(e)
+	}
 }
 
 func main() {
-  listFields := flag.Bool("list-fields", false, "List all fields in shapefile")
-  showExample := flag.Bool("show-example", false, "Show an example shape from the shapefile")
-  flag.Parse()
+	listFields := flag.Bool("list-fields", false, "List all fields in shapefile")
+	showExample := flag.Bool("show-example", false, "Show an example shape from the shapefile")
+	flag.Parse()
 
-  shapefile := flag.Args()[0]
+	shapefile := flag.Args()[0]
 
-  zipShape, err := shp.OpenZip(shapefile)
-  if err != nil {
-    panic(err)
-  }
+	zipShape, err := shp.OpenZip(shapefile)
+	if err != nil {
+		panic(err)
+	}
 
-  defer zipShape.Close()
+	defer zipShape.Close()
 
-  if *listFields == true {
-    ListFields(zipShape)
-    os.Exit(0)
-  }
+	if *listFields == true {
+		ListFields(zipShape)
+		os.Exit(0)
+	}
 
-  if *showExample == true {
-    ShowExample(zipShape)
-    os.Exit(0)
-  }
+	if *showExample == true {
+		ShowExample(zipShape)
+		os.Exit(0)
+	}
 
-  mappings := MapShapeFields(zipShape)
+	mappings := MapShapeFields(zipShape)
 
-  fmt.Print("Will use the following mappings: ", mappings)
-  fmt.Println()
+	fmt.Print("Will use the following mappings: ", mappings)
+	fmt.Println()
 
-  nrShelters, shelters := ShapeToGeoJson(zipShape, mappings)
+	nrShelters, shelters := ShapeToGeoJson(zipShape, mappings)
 
-  StoreJson(shelters)
+	StoreJson(shelters)
 
-  fmt.Printf("Successfully wrote %d shapes to JSON", nrShelters)
-  fmt.Println()
+	fmt.Printf("Successfully wrote %d shapes to JSON", nrShelters)
+	fmt.Println()
 }

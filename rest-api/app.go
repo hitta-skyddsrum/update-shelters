@@ -18,7 +18,7 @@ type App struct {
 }
 
 type ErrorResponse struct {
-  Message     string `json:"message"`
+	Message string `json:"message"`
 }
 
 func (a *App) RespondWithJson(w http.ResponseWriter, code int, payload interface{}) {
@@ -30,11 +30,11 @@ func (a *App) RespondWithJson(w http.ResponseWriter, code int, payload interface
 }
 
 func (a *App) RespondWithError(w http.ResponseWriter, code int, message string) {
-  response := ErrorResponse{
-    Message: message,
-  }
+	response := ErrorResponse{
+		Message: message,
+	}
 
-  a.RespondWithJson(w, code, response)
+	a.RespondWithJson(w, code, response)
 }
 
 func main() {
@@ -51,12 +51,12 @@ func main() {
 	a.Router.HandleFunc("/shelters", a.GetSheltersByBBox).Methods("GET")
 	a.Router.HandleFunc("/shelters/:id", a.GetShelterById).Methods("GET")
 
-  srv := &http.Server{
-    Handler:      a.Router,
-    Addr:         "127.0.0.1:8000",
-    WriteTimeout: 15 * time.Second,
-    ReadTimeout:  15 * time.Second,
-  }
+	srv := &http.Server{
+		Handler:      a.Router,
+		Addr:         "127.0.0.1:8000",
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
 
-  log.Fatal(srv.ListenAndServe())
+	log.Fatal(srv.ListenAndServe())
 }

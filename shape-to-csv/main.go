@@ -3,15 +3,14 @@
 package main
 
 import (
-  "flag"
-  "path/filepath"
+	"flag"
+	"path/filepath"
 )
 
 func main() {
-  flag.Parse()
+	flag.Parse()
 
-  filePath := flag.Args()[0]
+	filePath := flag.Args()[0]
 
-  ExportShapeToCSV(filePath, filepath.Base(filePath))
+	ExportShapeToCSV(filePath, filepath.Base(filePath))
 }
-
