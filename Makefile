@@ -1,3 +1,5 @@
+SHELL:=/bin/bash
+
 install = dep ensure
 folders = check-for-updates import-csv-to-mysql migrate-db rest-api shape-to-csv
 lambda_env_vars = GOARCH=amd64 GOOS=linux
@@ -15,6 +17,9 @@ dry-deploy:
 
 clean:
 	rm -rf bin/*
+
+lint:
+	$(foreach folder,$(folders),diff -u <(echo -n) <(gofmt -d -s ./$(folder));)
 
 test:
 	go test ./import-csv-to-mysql
