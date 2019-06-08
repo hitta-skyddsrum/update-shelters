@@ -10,6 +10,8 @@ install:
 
 jobs:
   include:
+  - stage: lint
+    script: make lint
   - stage: test
     script: make test && make coverage && bash <(curl -s https://codecov.io/bash)
   - stage: build
